@@ -53,7 +53,7 @@ Write rules worth knowing:
 
 ## Requirements
 
-- Node.js 24 and npm
+- Node.js 22 or newer and npm
 - A Cloudflare account (free plan is enough)
 - A Slack workspace where you can install a custom app (free plan is enough)
 - An Attio workspace with the Deals object enabled and an access token with
