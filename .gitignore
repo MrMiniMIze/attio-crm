@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Secrets and local configuration (the committed example is the only template)
+.env
+.env.*
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# Cloudflare and build output
+.wrangler/
+dist/
+*.tsbuildinfo
+
+# Test output
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editors and operating systems
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Local tooling scratch, never part of the project
+.remember/

@@ -1,0 +1,34 @@
+{
+  "display_information": {
+    "name": "Attio CRM",
+    "description": "Add leads, companies, deals, tasks and notes to Attio from Slack",
+    "background_color": "#1f2933"
+  },
+  "features": {
+    "bot_user": { "display_name": "Attio CRM", "always_online": true },
+    "slash_commands": [
+      {
+        "command": "/crm",
+        "url": "https://WORKER_HOST/slack/command",
+        "description": "Add or update something in Attio",
+        "usage_hint": "[lead|hunt|deal|task|note] ...",
+        "should_escape": false
+      }
+    ]
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": ["commands", "chat:write", "chat:write.public", "users:read", "users:read.email"]
+    }
+  },
+  "settings": {
+    "interactivity": {
+      "is_enabled": true,
+      "request_url": "https://WORKER_HOST/slack/interact",
+      "message_menu_options_url": "https://WORKER_HOST/slack/interact"
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": false
+  }
+}
