@@ -188,9 +188,9 @@ const MARK: Record<WriteItem['outcome'], string> = {
 function itemLine(item: WriteItem): string {
   const name = item.url ? `<${item.url}|${item.label}>` : item.label;
   const tail = item.outcome === 'failed'
-    ? `failed: ${item.detail ?? 'unknown error'}`
+    ? `failed (${item.detail ?? 'unknown error'})`
     : item.detail ? `${item.outcome}, ${item.detail}` : item.outcome;
-  return `${MARK[item.outcome]} ${name} — ${tail}`;
+  return `${MARK[item.outcome]} ${name}: ${tail}`;
 }
 
 export function summaryText(report: WriteReport): string {

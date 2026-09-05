@@ -20,7 +20,7 @@ function line(a: Action): string {
     case 'upsert_company': return `- Company: ${companyText(a.company)}`;
     case 'upsert_person': return `- Person: ${personText(a.person)}${a.company ? ` at ${companyNameOnly(a.company)}` : ''}`;
     case 'set_deal_stage': {
-      const parts = [a.stage ? `→ ${a.stage}` : null, a.value !== null ? `value ${a.value}` : null, a.owner.email ? `owner ${a.owner.email}` : null].filter(Boolean);
+      const parts = [a.stage ? `stage ${a.stage}` : null, a.value !== null ? `value ${a.value}` : null, a.owner.email ? `owner ${a.owner.email}` : null].filter(Boolean);
       return `- Deal: ${companyNameOnly(a.company)} ${parts.join(', ')}`.trimEnd();
     }
     case 'create_task': {

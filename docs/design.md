@@ -1,4 +1,4 @@
-# CEO Slack requests → Attio → Clay: design
+# CEO Slack requests to Attio to Clay: design
 
 - **Date:** 2026-09-04 (revision 2, zero-credit design)
 - **Status:** Implemented (v1); go-live steps in `docs/runbook.md`
@@ -19,7 +19,7 @@ into Attio (deals, companies, people, tasks, notes) and then by hand again into 
    with no retyping by Maggie.
 2. Never lose the original request: every write carries a note with what was asked,
    by whom, when, and a link back to Slack.
-3. Replace the manual Attio → Clay sync with a scheduled import.
+3. Replace the manual Attio to Clay sync with a scheduled import.
 4. **Zero recurring cost.** No Attio workflow credits, no Clay credits, no paid Slack
    tier, no paid hosting. Everything runs on free tiers and the free Attio REST API.
 5. Keep the door open for an LLM parser later without redoing anything else.
@@ -64,23 +64,17 @@ same action document (section 8), so the writer never changes.
 
 ## 4. Architecture
 
-```
-Sagar types /crm in any conversation (DM with Maggie included)
-        │  Slack sends the slash command to the Worker
-        ▼
-Cloudflare Worker "attio-crm" (TypeScript, free tier)
-  ├─ Slack layer: signature check, /crm command, modal views, options search, buttons
-  ├─ Input → ActionDocument (section 8); modal mapper today, parsers later
-  ├─ Attio client: search, assert, query, create, notes, tasks  (REST, no credits)
-  ├─ Workers KV: submission log (30 d), event dedupe (1 d), stage + member cache (1 h)
-  └─ Summary card posted to #crm-requests with an Edit button
-        │
-        ▼
-Attio (source of truth: Companies, People, Deals, Tasks, Notes)
-        │  Clay scheduled import, daily, "update existing rows" on, free
-        ▼
-Clay tables: Deals, Companies, People
-```
+1. Sagar types `/crm` in any conversation (the DM with Maggie included). Slack sends the
+   slash command to the Worker.
+2. The Cloudflare Worker "attio-crm" (TypeScript, free tier) has five parts:
+   the Slack layer (signature check, `/crm` command, modal views, option search, buttons);
+   the input layer (modal mapper today, parsers later) that produces an ActionDocument
+   (section 8); the Attio client (search, assert, query, create, notes, tasks over REST,
+   no credits); Workers KV (submission log 30 days, event dedupe 1 day, stage and member
+   cache 1 hour); and the summary card posted to `#crm-requests` with an Edit button.
+3. Attio is the source of truth: Companies, People, Deals, Tasks, Notes.
+4. Clay imports from Attio on a daily schedule with "update existing rows" on, free.
+5. Clay tables: Deals, Companies, People.
 
 Ownership: the Slack app, Cloudflare account and Attio API key belong to the company,
 created by Maggie. Christopher builds, tests and hands over the repository. Secrets
@@ -108,8 +102,8 @@ Maggie's per-request work drops to zero. Maggie skims `#crm-requests` for anythi
 
 **App configuration**
 
-- Slash command `/crm` → `POST https://<worker>/slack/command`
-- Interactivity and shortcuts → `POST https://<worker>/slack/interact` (modal
+- Slash command `/crm`: `POST https://<worker>/slack/command`
+- Interactivity and shortcuts: `POST https://<worker>/slack/interact` (modal
   submissions, button clicks, and `external_select` option loads all arrive here)
 - Bot token scopes: `commands`, `chat:write`, `chat:write.public` (so the summary can
   post to `#crm-requests` even before the bot is invited), `users:read`,
@@ -123,8 +117,8 @@ Maggie's per-request work drops to zero. Maggie skims `#crm-requests` for anythi
 
 | Form | Fields |
 |---|---|
-| Add lead | Company* (record picker with a "Create new: `<typed text>`" option), Person name, Person email, Stage* (from Attio, default Lead), Owner* (workspace members, default Maggie), Note, Follow-up task, Due date |
-| Add companies to hunt | Companies* (multi-line, one name or domain per line), Stage* (default Lead), Owner* (default Maggie), Note |
+| Add lead | Company* (record picker with a "Create new: `<typed text>`" option), Person name, Person email, Stage* (from Attio, default Lead), Owner* (workspace members, default Maggie), Note, Follow up task, Due date |
+| Add companies to hunt | Companies* (multiline, one name or domain per line), Stage* (default Lead), Owner* (default Maggie), Note |
 | Update deal | Deal* (record picker showing the deal name; Attio's search endpoint returns no stage), New stage, Value, Add person name, Add person email, Note |
 | Add task | Record* (record picker across companies and people), Task text*, Due date, Assignee* (default Maggie) |
 | Add note | Record* (record picker across companies and people), Note text* |
@@ -146,10 +140,10 @@ a company or a "create new" value for lead; a due date not in the past.
 
 ```
 Sagar via /crm · 2026-09-04 16:45
-✔ Company Cozeva (cozeva.com) — existing
-✔ Person Jane Doe — created, linked to Cozeva
-✔ Deal Cozeva — created, stage Lead, owner Maggie
-✔ Task "Follow up directly" — due 2026-09-05, assigned to Maggie
+✔ Company Cozeva (cozeva.com): existing
+✔ Person Jane Doe: created, linked to Cozeva
+✔ Deal Cozeva: created, stage Lead, owner Maggie
+✔ Task "Follow up directly": created, due 2026-09-05, assigned to Maggie
 ✔ Note attached to Cozeva and Jane Doe
 [Edit]
 ```
@@ -163,9 +157,9 @@ Modules, each independently testable:
   `views.open` using the `trigger_id` (must happen within 3 seconds).
 - `slack/views.ts`: Block Kit builders for the chooser, five forms, and the summary
   card. Pure functions from data to blocks.
-- `slack/options.ts`: `external_select` handler → Attio search → options.
-- `input/from-modal.ts`: modal submission → `ActionDocument`. Confidence is always 1.
-- `input/parser.ts`: the `Parser` interface (`parse(text, today) → { kind, prefill }`)
+- `slack/options.ts`: `external_select` handler: Attio search, then options.
+- `input/from-modal.ts`: modal submission to `ActionDocument`. Confidence is always 1.
+- `input/parser.ts`: the `Parser` interface (`parse(text, today)` returning `{ kind, prefill }`)
   and the rule-based `ruleParser` used for `/crm <subcommand> <args>` shortcuts; a
   parser opens a prefilled form and never writes.
 - `attio/client.ts`: thin fetch wrapper with bearer auth, JSON, `429` retry honouring
@@ -180,18 +174,19 @@ Modules, each independently testable:
 
 **Write rules** (`attio/writer.ts`):
 
-1. **Company.** Picked from the search → use its record ID. "Create new" with a
-   domain → `PUT /v2/objects/companies/records?matching_attribute=domains`. "Create
-   new" with a name only → search by name; 0 → create; 1 → use; more than one →
-   skip with reason "ambiguous, N matches" (only reachable from the hunt form's
-   free-text list).
-2. **Person.** Email given → assert on `email_addresses` and set `company`. Name only →
-   search people by name within the company; 0 → create; 1 → use; more → skip.
+1. **Company.** Picked from the search: use its record ID. "Create new" with a
+   domain: `PUT /v2/objects/companies/records?matching_attribute=domains`. "Create
+   new" with a name only: search by name; none found, create; one found, use it; more
+   than one, skip with reason "ambiguous, N matches" (only reachable from the hunt
+   form's free text list).
+2. **Person.** Email given: assert on `email_addresses` and set `company`. Name only:
+   search people by name within the company; none found, create; one found, use it;
+   more, skip.
 3. **Deal.** Query deals where `associated_company` is the company and `stage` is not
-   Won or Lost. 1 → update value and add the person; the stage is left unchanged
-   (only the Update deal form changes an existing deal's stage). 0 → create with
-   `name` = company name, `stage`, `owner`, `associated_company`, `associated_people`.
-   More → skip with reason. A company whose only deals are Won or Lost gets a fresh
+   Won or Lost. One open deal: update value and add the person; the stage is left
+   unchanged (only the Update deal form changes an existing deal's stage). None: create
+   with `name` = company name, `stage`, `owner`, `associated_company`, `associated_people`.
+   More than one: skip with reason. A company whose only deals are Won or Lost gets a fresh
    deal; intended.
 4. **Task.** `POST /v2/tasks` with `content`, `deadline_at` (due date at 17:00
    America/Los_Angeles, ISO 8601), `linked_records`, `assignees`.
@@ -363,7 +358,7 @@ Rules that hold for every producer:
 | Attio `4xx` on a write | Stop the dependency chain for that company; summary card shows the failed step and the error text; Edit lets Sagar retry |
 | Company name matches several records (hunt free text only) | Skipped, listed on the card with the candidates |
 | Open deal already exists | Stage updated, no second deal |
-| Slack retries a callback | Dedupe key already in KV → acknowledged and ignored |
+| Slack retries a callback | Dedupe key already in KV, so it is acknowledged and ignored |
 | Worker throws | Slack shows a generic error; the exception is in Workers Logs; the request is not recorded as a submission, so Edit is not offered, and Sagar re-runs `/crm` |
 | KV daily write limit reached | Impossible at this volume (about 4 writes per request, 1,000/day allowed); if it ever happens, writes fail loudly and the summary card says so |
 | Clay import fails | Clay's own notification; no coupling |
@@ -405,7 +400,7 @@ until go-live.
 5. Sagar gets a one-screen guide: `/crm`, the five forms, Edit.
 
 **Two-week soft launch.** Maggie tallies per request: correct / needed Edit / failed.
-Fewer than 5% failures and no wrong-record writes → done. Anything else → fix,
+Fewer than 5% failures and no writes to the wrong record: done. Anything else: fix,
 repeat.
 
 ## 12. The LLM parser option (designed, not built)

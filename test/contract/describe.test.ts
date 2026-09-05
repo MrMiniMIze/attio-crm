@@ -17,7 +17,7 @@ describe('describeDocument', () => {
     expect(md.split('\n')).toEqual([
       '- Company: Cozeva (cozeva.com)',
       '- Person: Jane Doe <jane@cozeva.com> at Cozeva',
-      '- Deal: Cozeva → Lead, value 4200, owner maggie@example.com',
+      '- Deal: Cozeva stage Lead, value 4200, owner maggie@example.com',
       '- Task: Follow up, due 2026-09-05, assigned to maggie@example.com',
       '- Note: Warm intro',
     ]);

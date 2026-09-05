@@ -85,8 +85,8 @@ describe('views', () => {
     const blocks = buildSummaryBlocks({ requesterName: 'Sagar', whenIso: '2026-09-04T23:45:00.000Z', report, submissionId: 'sub-1' });
     const text = JSON.stringify(blocks);
     expect(text).toContain('Sagar via /crm');
-    expect(text).toContain('✔ <https://app.attio.com/x/d-1|Deal Cozeva> — created, stage Lead, owner Maggie');
-    expect(text).toContain('✖ Follow up — failed: Attio 400: bad deadline');
+    expect(text).toContain('✔ <https://app.attio.com/x/d-1|Deal Cozeva>: created, stage Lead, owner Maggie');
+    expect(text).toContain('✖ Follow up: failed (Attio 400: bad deadline)');
     const actions = blocks.find((b) => b.type === 'actions') as any;
     expect(actions.elements[0]).toMatchObject({ action_id: 'edit_submission', value: 'sub-1' });
   });
