@@ -31,6 +31,8 @@ Shortcuts skip the chooser: `/crm lead Jane Doe @ cozeva.com`, `/crm hunt Ensora
 
 ## How it works
 
+![One request travelling left to right across four lanes: Slack, the Cloudflare Worker, Attio and Clay](docs/flow.svg)
+
 1. Slack sends the `/crm` command or a modal interaction to the Worker.
 2. The Worker verifies the Slack signature on every request and checks the user against an allowlist.
 3. A modal submission becomes an `ActionDocument`, one validated list of typed actions.
@@ -38,6 +40,8 @@ Shortcuts skip the chooser: `/crm lead Jane Doe @ cozeva.com`, `/crm hunt Ensora
 5. The Worker posts the summary card, stores the submission in Workers KV, and answers Slack within three seconds. The Attio writes run in the background.
 
 Write rules worth knowing:
+
+![What happens when a company already has deals: none creates one, one is updated with its stage left unchanged, two or more are skipped and named on the card](docs/deal-decision.svg)
 
 - Companies are matched by domain and people by email. An entry with only a name is searched
   first and created only if nothing matches. Ambiguous matches are skipped and reported, never
@@ -108,7 +112,7 @@ src/
   store/kv.ts         Workers KV store
   util/dates.ts       date helpers that respect the configured timezone
 test/                 one test file per module plus recording fakes for Slack, Attio, KV
-docs/                 design document and operator runbook
+docs/                 design document, operator runbook, flow diagrams
 slack-manifest.json   Slack app manifest (replace WORKER_HOST before installing)
 wrangler.jsonc        Cloudflare Worker configuration
 ```

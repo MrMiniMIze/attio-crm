@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="1000" height="500" role="img" aria-label="One request travels left to right across four lanes: Slack, the Cloudflare Worker, Attio and Clay. Sagar types /crm, the Worker verifies the request and opens a form whose pickers search Attio live, Sagar fills it in and submits, the submission becomes an ordered action list, the Worker writes to Attio over REST and posts a summary card with an Edit button that reopens the form, and Clay imports from Attio daily.">
+  <style>
+    .bg { fill: #f3f5f8; }
+    .lane { fill: #1b2432; fill-opacity: 0.045; }
+    .box { fill: #ffffff; stroke: #8a97ab; stroke-width: 1; }
+    .box.accent { stroke: #d9691a; stroke-width: 1.6; }
+    .lbl { font: 600 10.5px "IBM Plex Sans", "Segoe UI", system-ui, sans-serif; letter-spacing: 0.1em; text-transform: uppercase; fill: #5c6a80; }
+    .t { font: 500 12.5px "IBM Plex Sans", "Segoe UI", system-ui, sans-serif; fill: #1b2432; }
+    .t2 { font: 400 11px "IBM Plex Sans", "Segoe UI", system-ui, sans-serif; fill: #5c6a80; }
+    .edge { stroke: #4d5b70; stroke-width: 1.4; fill: none; }
+    .edge.accent { stroke: #d9691a; stroke-width: 2.2; }
+    .elbl { font: 400 11px "IBM Plex Sans", "Segoe UI", system-ui, sans-serif; fill: #3d4a5e; }
+    .elbl.accent { fill: #d9691a; font-weight: 600; }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4d5b70"/></marker>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9691a"/></marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1000" height="500"/>
+  <rect class="lane" x="0" y="40" width="1000" height="110"/>
+  <rect class="lane" x="0" y="160" width="1000" height="110"/>
+  <rect class="lane" x="0" y="280" width="1000" height="110"/>
+  <rect class="lane" x="0" y="400" width="1000" height="90"/>
+  <text class="lbl" x="16" y="99">Slack</text>
+  <text class="lbl" x="16" y="212">Cloudflare</text>
+  <text class="lbl" x="16" y="226">Worker</text>
+  <text class="lbl" x="16" y="339">Attio</text>
+  <text class="lbl" x="16" y="449">Clay</text>
+
+  <path class="edge" d="M885,67 V22 H445 V63" marker-end="url(#arr)"/>
+  <text class="elbl" x="665" y="16" text-anchor="middle">Edit reopens the same form, prefilled</text>
+
+  <rect class="box" x="140" y="67" width="170" height="56" rx="4"/>
+  <text class="t" x="225" y="92" text-anchor="middle">Sagar types /crm</text>
+  <text class="t2" x="225" y="109" text-anchor="middle">in any conversation</text>
+
+  <rect class="box" x="360" y="67" width="170" height="56" rx="4"/>
+  <text class="t" x="445" y="92" text-anchor="middle">Form opens</text>
+  <text class="t2" x="445" y="109" text-anchor="middle">pickers search as he types</text>
+
+  <rect class="box" x="580" y="67" width="170" height="56" rx="4"/>
+  <text class="t" x="665" y="92" text-anchor="middle">Sagar submits</text>
+  <text class="t2" x="665" y="109" text-anchor="middle">modal closes at once</text>
+
+  <rect class="box" x="800" y="67" width="170" height="56" rx="4"/>
+  <text class="t" x="885" y="92" text-anchor="middle">Summary card</text>
+  <text class="t2" x="885" y="109" text-anchor="middle">#crm-requests, with Edit</text>
+
+  <rect class="box" x="140" y="187" width="170" height="56" rx="4"/>
+  <text class="t" x="225" y="212" text-anchor="middle">Verify signature</text>
+  <text class="t2" x="225" y="229" text-anchor="middle">check the allowlist</text>
+
+  <rect class="box" x="360" y="187" width="170" height="56" rx="4"/>
+  <text class="t" x="445" y="212" text-anchor="middle">Search proxy</text>
+  <text class="t2" x="445" y="229" text-anchor="middle">answers in under 2.5 s</text>
+
+  <rect class="box" x="580" y="187" width="170" height="56" rx="4"/>
+  <text class="t" x="665" y="212" text-anchor="middle">Build action list</text>
+  <text class="t2" x="665" y="229" text-anchor="middle">companies, people, deals, tasks, notes</text>
+
+  <rect class="box accent" x="800" y="187" width="170" height="56" rx="4"/>
+  <text class="t" x="885" y="212" text-anchor="middle">Writer</text>
+  <text class="t2" x="885" y="229" text-anchor="middle">then card, then save to KV</text>
+
+  <rect class="box" x="360" y="307" width="170" height="56" rx="4"/>
+  <text class="t" x="445" y="332" text-anchor="middle">Search records</text>
+  <text class="t2" x="445" y="349" text-anchor="middle">companies, people, deals</text>
+
+  <rect class="box" x="800" y="307" width="170" height="56" rx="4"/>
+  <text class="t" x="885" y="332" text-anchor="middle">Companies, People, Deals</text>
+  <text class="t2" x="885" y="349" text-anchor="middle">Tasks, Notes (source of truth)</text>
+
+  <rect class="box" x="800" y="417" width="170" height="56" rx="4"/>
+  <text class="t" x="885" y="442" text-anchor="middle">Daily import</text>
+  <text class="t2" x="885" y="459" text-anchor="middle">Deals, Companies, People</text>
+
+  <line class="edge" x1="225" y1="123" x2="225" y2="183" marker-end="url(#arr)"/>
+  <text class="elbl" x="218" y="150" text-anchor="end">slash command</text>
+
+  <path class="edge" d="M310,215 H345 V95 H356" marker-end="url(#arr)"/>
+  <text class="elbl" x="338" y="172" text-anchor="end">opens the form</text>
+
+  <line class="edge" x1="445" y1="127" x2="445" y2="183" marker-start="url(#arr)" marker-end="url(#arr)"/>
+  <text class="elbl" x="452" y="158">typed text, options back</text>
+
+  <line class="edge" x1="445" y1="247" x2="445" y2="303" marker-start="url(#arr)" marker-end="url(#arr)"/>
+  <text class="elbl" x="452" y="278">REST search</text>
+
+  <line class="edge" x1="530" y1="95" x2="576" y2="95" marker-end="url(#arr)"/>
+  <text class="elbl" x="553" y="61" text-anchor="middle">fills it in</text>
+
+  <line class="edge" x1="640" y1="123" x2="640" y2="183" marker-end="url(#arr)"/>
+  <text class="elbl" x="634" y="158" text-anchor="end">submission</text>
+  <line class="edge" x1="700" y1="187" x2="700" y2="127" marker-end="url(#arr)"/>
+  <text class="elbl" x="706" y="150">ok in</text>
+  <text class="elbl" x="706" y="164">under 3 s</text>
+
+  <line class="edge" x1="750" y1="215" x2="796" y2="215" marker-end="url(#arr)"/>
+  <text class="elbl" x="773" y="181" text-anchor="middle">in order</text>
+
+  <line class="edge accent" x1="885" y1="243" x2="885" y2="303" marker-end="url(#arr-a)"/>
+  <text class="elbl accent" x="893" y="270">writes over REST</text>
+  <text class="elbl accent" x="893" y="284">no credits spent</text>
+
+  <line class="edge" x1="830" y1="187" x2="830" y2="127" marker-end="url(#arr)"/>
+  <text class="elbl" x="838" y="150">card with</text>
+  <text class="elbl" x="838" y="164">links and Edit</text>
+
+  <line class="edge" x1="885" y1="363" x2="885" y2="413" marker-end="url(#arr)"/>
+  <text class="elbl" x="893" y="392">daily, updates existing rows</text>
+</svg>
