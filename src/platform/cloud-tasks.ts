@@ -1,4 +1,4 @@
-import { CloudTasksClient } from '@google-cloud/tasks';
+import type { CloudTasksClient } from '@google-cloud/tasks';
 import type { Queue } from './queue';
 import type { QueuedSubmission } from '../pipeline';
 
@@ -16,14 +16,25 @@ export interface CloudTasksConfig {
 /** Task ids accept letters, digits, hyphens and underscores only. */
 const taskId = (key: string) => key.replace(/[^A-Za-z0-9_-]/g, '-').slice(0, 500);
 
-export function createCloudTasksQueue(
-  cfg: CloudTasksConfig,
-  client: CloudTasksClient = new CloudTasksClient(),
-): Queue {
+export function createCloudTasksQueue(cfg: CloudTasksConfig, injected?: CloudTasksClient): Queue {
+  let client: CloudTasksClient | undefined = injected;
+
+  // Loaded on first enqueue rather than at boot. The client costs about
+  // 140 ms to import, and the cold path that matters — /crm opening a modal
+  // inside Slack's three seconds — never reaches it.
+  async function tasks(): Promise<CloudTasksClient> {
+    if (!client) {
+      const { CloudTasksClient: Ctor } = await import('@google-cloud/tasks');
+      client = new Ctor();
+    }
+    return client;
+  }
+
   return {
     async enqueue(job, dedupeKey) {
+      const c = await tasks();
       try {
-        await client.createTask({
+        await c.createTask({
           parent: cfg.parent,
           task: {
             // Naming the task is the whole deduplication story: the queue

@@ -450,9 +450,11 @@ Assumptions to verify during build:
 - Attio status options for `stage` are readable with the object-configuration scope.
 - Slack's `external_select` "create new" pattern (an option carrying the typed text)
   behaves as expected on the free plan.
-- Cloud Run cold starts (roughly 0.9-2.6 s for a lean Node container) fit inside Slack's
-  3-second window. Mitigated by a Cloud Scheduler warm ping on business hours; see the
-  runbook. Expected steady-state response: well under 300 ms; fetch waits do
+- Cloud Run cold starts fit inside Slack's 3-second window. Measured boot to first
+  response is 300-480 ms locally, plus roughly 200-400 ms for views.open. Nothing is
+  scheduled to keep the service warm: at 10 submissions a day that would be manufacturing
+  traffic to avoid an occasional retype. Expected steady-state response: well under 300 ms;
+  fetch waits do
   not count.
 
 ## 15. Sources

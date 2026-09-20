@@ -1,5 +1,4 @@
 import { createServer, type IncomingMessage } from 'node:http';
-import { Firestore } from '@google-cloud/firestore';
 import { readEnv } from './env';
 import { createRouter } from './router';
 import { createFirestoreStore } from './store/firestore';
@@ -14,7 +13,7 @@ const port = Number(process.env.PORT ?? 8080);
 // falls back to running writes inline against an in-memory store.
 const onCloudRun = Boolean(env.QUEUE_PARENT && env.TASK_URL && env.QUEUE_INVOKER);
 
-const store = onCloudRun ? createFirestoreStore(new Firestore()) : createMemoryStore();
+const store = onCloudRun ? createFirestoreStore(new (await import('@google-cloud/firestore')).Firestore()) : createMemoryStore();
 const queue: Queue | undefined = onCloudRun
   ? createCloudTasksQueue({ parent: env.QUEUE_PARENT!, targetUrl: env.TASK_URL!, invoker: env.QUEUE_INVOKER! })
   : undefined;

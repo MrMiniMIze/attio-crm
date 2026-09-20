@@ -16,7 +16,7 @@
    (channel details > copy ID), `DEFAULT_OWNER_EMAIL` = Maggie's Attio login email,
    `ALLOWED_USERS` = Slack member IDs for Sagar and Maggie (profile > More > Copy member ID).
 5. **Deploy**: the two-pass `gcloud run deploy` in the README; note the `*.run.app` URL.
-   Then enable the three Firestore TTL policies and create the Cloud Scheduler warm ping.
+   Then enable the three Firestore TTL policies.
 6. **Slack app** (Maggie): api.slack.com/apps > Create New App > From a manifest > paste
    `slack-manifest.json` with `CLOUD_RUN_HOST` replaced > Install to Workspace. Copy the
    Signing Secret and Bot User OAuth Token into step 3, then redeploy.
@@ -56,7 +56,7 @@ Every submission posts a card in `#crm-requests`. Click **Edit** on the card to 
 |---|---|
 | `/crm` says "dispatch_failed" | Service down or URL wrong: `curl https://CLOUD_RUN_HOST/health` |
 | Modal opens but pickers show nothing | Attio token scopes; logs for `AttioError`. If this is a shared Slack app, also check that the Select Menus Options URL is set |
-| First `/crm` of the day times out, later ones are fine | Cold start. Confirm the Cloud Scheduler warm ping exists and is enabled: `gcloud scheduler jobs list --location=REGION` |
+| First `/crm` of the day times out, later ones are fine | Cold start overran Slack's three seconds. Time it: `time curl https://CLOUD_RUN_HOST/healthz` after 20 minutes idle. Check `--cpu-boost` is set and that nothing turned the dynamic GCP imports back into top-level ones. `--min-instances=1` (~$6–12/mo) is the guaranteed fix |
 | Card says "some steps failed" | Click the failed line's detail; usually a stage title that no longer exists (stage cache refreshes hourly) |
 | Cards stop appearing but Slack acknowledges | The queue is backed up or the task route is rejecting: `gcloud tasks queues describe crm-writes --location=REGION` |
 | "This command is limited to the sales team." | Add the Slack member ID to `ALLOWED_USERS` and redeploy |
@@ -103,9 +103,10 @@ company data.
 
 5. Confirm five things the unit tests cannot, all of them against the real Cloud Run
    deployment rather than the dev server:
-   - the modal opens within Slack's three second window on a **cold start** — pause the
-     scheduler job, wait twenty minutes, then type `/crm`. Run it twice; the second is faster
-     because the image is cached;
+   - the modal opens within Slack's three second window on a **cold start** — leave the
+     service idle for twenty minutes, then type `/crm`. Run it twice; the second is faster
+     because the image is cached. This is the check that decides whether `--min-instances=1`
+     is worth buying;
    - the source notes carry a Slack link, which means `users.info` and `chat.getPermalink`
      accepted the calls;
    - the card posts to the channel;

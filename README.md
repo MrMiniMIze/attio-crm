@@ -8,8 +8,8 @@ from Slack in under thirty seconds, with nobody retyping anything.
 namespaced `crm_`, and [`src/slack/dispatch.ts`](src/slack/dispatch.ts) gives you the one
 function needed to route traffic to it without touching your existing handlers.
 
-**Zero recurring cost.** Cloud Run, Firestore, Cloud Tasks, Secret Manager and Cloud
-Scheduler all stay inside their free tiers at this volume, and the Attio REST API is not
+**Zero recurring cost.** Cloud Run, Firestore, Cloud Tasks and Secret Manager all stay
+inside their free tiers at this volume, and the Attio REST API is not
 credit-metered.
 
 - Design document: [`docs/design.md`](docs/design.md)
@@ -146,8 +146,7 @@ export PROJECT=your-project REGION=us-central1
 gcloud config set project $PROJECT
 
 gcloud services enable run.googleapis.com cloudtasks.googleapis.com \
-  firestore.googleapis.com secretmanager.googleapis.com \
-  cloudscheduler.googleapis.com cloudbuild.googleapis.com
+  firestore.googleapis.com secretmanager.googleapis.com cloudbuild.googleapis.com
 
 gcloud firestore databases create --location=nam5      # permanent, choose carefully
 gcloud tasks queues create crm-writes --location=$REGION \
@@ -183,11 +182,6 @@ TIMEZONE=America/Los_Angeles"
 
 gcloud run services add-iam-policy-binding attio-crm --region=$REGION \
   --member="serviceAccount:crm-queue@$PROJECT.iam.gserviceaccount.com" --role=roles/run.invoker
-
-# Free way to avoid cold starts during the working day.
-gcloud scheduler jobs create http crm-warm --location=$REGION \
-  --schedule="*/5 6-19 * * 1-5" --time-zone="America/Los_Angeles" \
-  --uri="$URL/healthz" --http-method=GET
 ```
 
 Then put `$URL` into the three Slack settings above (`slack-manifest.json` has them as
@@ -236,21 +230,45 @@ and email; deduplication for the submission as a whole is the Cloud Tasks *task 
 returns 2xx for anything already reported on the summary card — a non-2xx sends the task back
 to the queue, so it is reserved for failures a retry could actually fix.
 
+## Cold starts
+
+The service scales to zero and `/crm` wakes it. Measured boot to first response
+is **300–480 ms** on a laptop; `views.open` adds roughly 200–400 ms, so a cold
+`/crm` answers in about a second against Slack's three-second budget. Cloud Run
+adds scheduling and (on the first pull) the image, so measure your own before
+assuming — but there is a lot of headroom.
+
+Nothing is scheduled to keep the service warm. At ten submissions a day a ping
+every five minutes would be roughly 170 wake-ups to serve 10 real requests, and
+the failure it prevents is mild: if a cold start ever does overrun, `trigger_id`
+expires, the modal does not open, and the user types `/crm` again against a now
+warm instance. If that turns out to be more than an occasional annoyance, buy the
+guarantee with `--min-instances=1` rather than manufacturing traffic.
+
+Two things keep the cold path short, and both are easy to undo by accident:
+
+- `@google-cloud/firestore` and `@google-cloud/tasks` are **dynamically imported**
+  (`src/server.ts`, `src/platform/cloud-tasks.ts`). Together they cost about
+  190 ms to load. Turning either back into a top-level `import` puts that back on
+  every cold start.
+- `--cpu-boost` on the service, and an esbuild bundle rather than a source tree.
+
 ## Cost
 
 | Service | Free allowance | Use at ~10 submissions/day |
 |---|---|---|
-| Cloud Run | 2M requests, 180k vCPU-s/mo | ~15k, ~4.4k |
-| Firestore | 20k writes, 50k reads/day | ~80, ~400 |
-| Cloud Tasks | 1M operations/mo | ~600 |
+| Cloud Run | 2M requests, 180k vCPU-s/mo | ~700 requests, ~1.3k vCPU-s |
+| Firestore | 20k writes, 50k reads/day | ~40 writes, ~150 reads |
+| Cloud Tasks | 1M operations/mo | ~400 |
 | Secret Manager | 6 active versions | 3 |
-| Cloud Scheduler | 3 jobs | 1 |
 
-Total $0. The binding constraint is Cloud Run vCPU-seconds, around 1,200 submissions a day.
+Total $0, on about 10 submissions a day — roughly 30 Slack round trips each once picker
+lookups are counted. That is under 1% of every allowance. The binding constraint is Cloud
+Run vCPU-seconds, which would run out somewhere above 1,000 submissions a day.
 
 Things that would start a bill: putting a global HTTPS load balancer in front of Cloud Run
 (~$18/mo, charged hourly regardless of traffic — the built-in `run.app` URL is all Slack
-needs); `--min-instances=1` (~$6–12/mo, and the warm ping above is the free alternative);
+needs); `--min-instances=1` (~$6–12/mo — see "cold starts" below before reaching for it);
 reaching for Memorystore instead of Firestore (no free tier); and moving any of this logic
 into an Attio *Workflow*, which is credit-metered where the REST API is not.
 
