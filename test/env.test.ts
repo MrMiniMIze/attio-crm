@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { parseConfig, type Env } from '../src/env';
 
 const base = {
-  KV: {} as KVNamespace,
   SLACK_SIGNING_SECRET: 's',
   SLACK_BOT_TOKEN: 'xoxb',
   ATTIO_TOKEN: 'a',

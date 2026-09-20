@@ -15,7 +15,7 @@ export function ephemeral(text: string): Response {
   return new Response(JSON.stringify({ response_type: 'ephemeral', text }), { status: 200, headers: { 'content-type': 'application/json' } });
 }
 
-export async function handleCommand(form: CommandForm, deps: CommandDeps, ctx: ExecutionContext): Promise<Response> {
+export async function handleCommand(form: CommandForm, deps: CommandDeps): Promise<Response> {
   if (!deps.config.allowedUsers.has(form.user_id)) return ephemeral(NOT_ALLOWED_TEXT);
 
   const metadata: ViewMetadata = { channel_id: form.channel_id, requester: form.user_id, submission_id: null, response_url: form.response_url || null };
@@ -35,6 +35,9 @@ export async function handleCommand(form: CommandForm, deps: CommandDeps, ctx: E
       if (form.response_url) await deps.slack.respond(form.response_url, `Could not open the form: ${msg}`).catch(() => {});
     }
   };
-  ctx.waitUntil(open());
+  // Opening the modal has to happen inside the same three seconds Slack
+  // allows for the reply, so it is awaited rather than deferred. views.open
+  // is a couple of hundred milliseconds; the budget is not tight here.
+  await open();
   return new Response('', { status: 200 });
 }

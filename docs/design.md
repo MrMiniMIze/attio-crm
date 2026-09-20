@@ -41,7 +41,7 @@ Checked 2026-09-04 against vendor docs (links in section 15).
 | Attio API: assert company by `domains`, assert person by `email_addresses`; deals accept `stage` by title, `owner` by email, `associated_company` by domain, `associated_people` by email; `POST /v2/tasks` links records by domain or email; `POST /v2/notes` takes markdown | The writer needs no ID bookkeeping for the common path |
 | Attio Deals: disabled by default; `name`, `stage`, `owner` required; no unique attribute; default stages Lead / In Progress / Won / Lost; a Free workspace may enable one extra object | Dedupe deals by company lookup; a free Attio workspace can serve as a dev sandbox |
 | Slack Free: up to 10 custom or third-party app installs; no Workflow Builder; slash commands, modals, buttons and shortcuts all work; 3-second acknowledgement rule on every callback | A custom app on the free plan replaces Workflow Builder |
-| Cloudflare Workers Free: 100k requests/day, 10 ms CPU per invocation (I/O wait excluded); Workers KV Free: 100k reads, 1k writes, 1k deletes per day, 1 GB; business use allowed | Hosting and state cost nothing at this volume |
+| Cloud Run Free: 2M requests, 180k vCPU-seconds, 360k GiB-seconds per month; Firestore Free: 50k reads, 20k writes per day, 1 GiB; Cloud Tasks Free: 1M operations per month | Hosting and state cost nothing at this volume |
 | Clay: CRM imports, webhook imports, formulas and filters are free; scheduled sources with "update existing rows"; hourly Enterprise-only; write-back to Attio costs 1 Clay credit per row | Import is free; do not write back |
 | Attio Slack app "Ask Attio" is read-only Q&A | Not usable as the writer |
 
@@ -56,7 +56,7 @@ month in API usage and prose parsing that needs a review step. Kept as the optio
 parser (section 12).
 
 **C. Hosted code with a structured form (chosen).** A slash command opens a modal;
-the modal resolves records against Attio while Sagar types; the Worker writes through
+the modal resolves records against Attio while Sagar types; the service writes through
 the REST API. Zero recurring cost, no parsing ambiguity, no review step needed.
 
 **Decision:** C, with the modal submission and any future parser both producing the
@@ -65,18 +65,18 @@ same action document (section 8), so the writer never changes.
 ## 4. Architecture
 
 1. Sagar types `/crm` in any conversation (the DM with Maggie included). Slack sends the
-   slash command to the Worker.
-2. The Cloudflare Worker "attio-crm" (TypeScript, free tier) has five parts:
+   slash command to the Cloud Run service.
+2. The Cloud Run service "attio-crm" (TypeScript, free tier) has five parts:
    the Slack layer (signature check, `/crm` command, modal views, option search, buttons);
    the input layer (modal mapper today, parsers later) that produces an ActionDocument
    (section 8); the Attio client (search, assert, query, create, notes, tasks over REST,
-   no credits); Workers KV (submission log 30 days, event dedupe 1 day, stage and member
+   no credits); Firestore (submission log 30 days, event dedupe 1 day, stage and member
    cache 1 hour); and the summary card posted to `#crm-requests` with an Edit button.
 3. Attio is the source of truth: Companies, People, Deals, Tasks, Notes.
 4. Clay imports from Attio on a daily schedule with "update existing rows" on, free.
 5. Clay tables: Deals, Companies, People.
 
-Ownership: the Slack app, Cloudflare account and Attio API key belong to the company,
+Ownership: the Slack app, Google Cloud project and Attio API key belong to the company,
 created by Maggie. Christopher builds, tests and hands over the repository. Secrets
 never live in the repo.
 
@@ -87,7 +87,8 @@ never live in the repo.
    **Add note**. Typing `/crm lead`, `/crm hunt`, `/crm deal`, `/crm task` or
    `/crm note` skips the chooser.
 2. The chosen form opens (section 6). Record pickers search Attio live as Sagar types.
-3. Sagar submits. The Worker validates, acknowledges within 3 seconds, and does the
+3. Sagar submits. The service validates, acknowledges within 3 seconds by handing the
+   writes to Cloud Tasks, and does the
    Attio writes in the background.
 4. A summary card lands in `#crm-requests`: what was created or updated, with links to
    the Attio records, and an **Edit** button. Sagar sees an ephemeral confirmation in
@@ -102,8 +103,8 @@ Maggie's per-request work drops to zero. Maggie skims `#crm-requests` for anythi
 
 **App configuration**
 
-- Slash command `/crm`: `POST https://<worker>/slack/command`
-- Interactivity and shortcuts: `POST https://<worker>/slack/interact` (modal
+- Slash command `/crm`: `POST https://<host>/slack/command`
+- Interactivity and shortcuts: `POST https://<host>/slack/interact` (modal
   submissions, button clicks, and `external_select` option loads all arrive here)
 - Bot token scopes: `commands`, `chat:write`, `chat:write.public` (so the summary can
   post to `#crm-requests` even before the bot is invited), `users:read`,
@@ -123,15 +124,15 @@ Maggie's per-request work drops to zero. Maggie skims `#crm-requests` for anythi
 | Add task | Record* (record picker across companies and people), Task text*, Due date, Assignee* (default Maggie) |
 | Add note | Record* (record picker across companies and people), Note text* |
 
-**Record pickers** are `external_select` elements. Slack calls the Worker with the
-typed text; the Worker runs Attio's search endpoint and returns up to 20 options
+**Record pickers** are `external_select` elements. Slack calls the service with the
+typed text; the service runs Attio's search endpoint and returns up to 20 options
 labelled with name and domain (companies), name and email (people), or company and
-stage (deals). Attio's search is fast enough for Slack's 3-second window; the Worker
+stage (deals). Attio's search is fast enough for Slack's 3-second window; the service
 returns whatever it has at 2.5 seconds.
 
 **Stage and owner dropdowns** are populated from Attio at open time: the status
 options of the deals `stage` attribute and the workspace member list, both cached in
-KV for one hour. The spec therefore has no hard-coded stage list.
+Firestore for one hour. The spec therefore has no hard-coded stage list.
 
 **Validation** happens on submit with inline errors: at least one company for hunt;
 a company or a "create new" value for lead; a due date not in the past.
@@ -148,7 +149,7 @@ Sagar via /crm · 2026-09-04 16:45
 [Edit]
 ```
 
-## 7. Worker internals
+## 7. Service internals
 
 Modules, each independently testable:
 
@@ -168,7 +169,10 @@ Modules, each independently testable:
   `createTask`, `createNote`, `listStageOptions`, `listWorkspaceMembers`.
 - `attio/writer.ts`: executes an `ActionDocument` in dependency order and returns a
   `WriteReport` (created, updated, skipped with reasons, touched record IDs).
-- `store/kv.ts`: submissions (`sub:<id>`, 30 days), dedupe (`evt:<id>`, 1 day),
+- `store/firestore.ts`: submissions (30 days), dedupe (1 day), cache (1 hour), each a
+  collection with a TTL policy on `expiresAt`. Expiry is also enforced on read, because
+  Firestore's TTL is a background sweep rather than an instant delete.
+- `store/store.ts`: the `Store` interface and an in-memory implementation,
   caches (`cache:stages`, `cache:members`, 1 hour).
 - `index.ts`: routing, 3-second acknowledgement, `ctx.waitUntil` for background work.
 
@@ -198,7 +202,7 @@ Modules, each independently testable:
    only what is new, and posts a fresh summary replacing the old card.
 
 **Dedupe.** Slack retries any callback not acknowledged within 3 seconds. Every
-modal submission is keyed by its Slack view id in KV before processing; a repeat is
+modal submission is keyed by its Slack view id as the Cloud Tasks task name; a repeat is
 acknowledged and ignored. Slash commands and button clicks acknowledge in
 milliseconds and are not deduplicated.
 
@@ -358,9 +362,10 @@ Rules that hold for every producer:
 | Attio `4xx` on a write | Stop the dependency chain for that company; summary card shows the failed step and the error text; Edit lets Sagar retry |
 | Company name matches several records (hunt free text only) | Skipped, listed on the card with the candidates |
 | Open deal already exists | Stage updated, no second deal |
-| Slack retries a callback | Dedupe key already in KV, so it is acknowledged and ignored |
-| Worker throws | Slack shows a generic error; the exception is in Workers Logs; the request is not recorded as a submission, so Edit is not offered, and Sagar re-runs `/crm` |
-| KV daily write limit reached | Impossible at this volume (about 4 writes per request, 1,000/day allowed); if it ever happens, writes fail loudly and the summary card says so |
+| Slack retries a callback | The Cloud Tasks task name already exists, so the enqueue is a no-op and the retry is acknowledged and ignored |
+| The service throws | Slack shows a generic error; the exception is in Cloud Logging; the request is not recorded as a submission, so Edit is not offered, and Sagar re-runs `/crm` |
+| Firestore daily write limit reached | Impossible at this volume (about 4 writes per request, 20,000/day allowed); if it ever happens, writes fail loudly and the summary card says so |
+| A queued write fails | Cloud Tasks retries with backoff up to 5 attempts; per-action failures are reported on the card and do not trigger a retry |
 | Clay import fails | Clay's own notification; no coupling |
 
 ## 10. Clay sync
@@ -383,8 +388,8 @@ three requests from the original notes expressed as form submissions, each with 
 expected `ActionDocument` and expected Attio calls (mocked `fetch`).
 
 **Dev sandbox at no cost.** Christopher creates a free Slack workspace and a free
-Attio workspace (Deals enabled as the one extra object). The Worker runs against
-these under `wrangler dev` and then a dev deployment. No company data is touched
+Attio workspace (Deals enabled as the one extra object). The service runs against
+these under `npm run dev` and then a dev deployment. No company data is touched
 until go-live.
 
 **Go-live checklist.**
@@ -393,8 +398,8 @@ until go-live.
    the 10 free-plan slots), invites the bot to `#crm-requests`, sets `ALLOWED_USERS`.
 2. Maggie creates an Attio access token with record read/write, note write, task
    write, and object configuration read.
-3. Maggie or the company creates a Cloudflare account; Christopher runs
-   `wrangler deploy` and sets secrets with `wrangler secret put`.
+3. Maggie or the company creates a Google Cloud project; Christopher runs
+   `gcloud run deploy` and stores secrets in Secret Manager.
 4. Five smoke submissions, one per form, against real Attio with `[TEST]` names,
    deleted afterwards.
 5. Sagar gets a one-screen guide: `/crm`, the five forms, Edit.
@@ -424,7 +429,7 @@ Trigger to build it: Sagar keeps sending prose instead of using `/crm`, or asks 
 |---|---|---|
 | Slack custom app | Free (or any) | $0 |
 | Attio REST API | Any plan | $0, no credits |
-| Cloudflare Worker + KV | Free | $0 |
+| Cloud Run + Firestore + Cloud Tasks | Free tier | $0 |
 | Clay Attio import | Any plan | $0 credits |
 | LLM parser (optional) | Pay per token | single-digit dollars if enabled |
 
@@ -434,7 +439,7 @@ Inputs, none blocking development in the sandbox:
 
 1. Sagar agrees to type `/crm`. Everything else about their habit stays.
 2. Maggie can install a custom app and create an Attio access token (confirmed).
-3. Who owns the Cloudflare account. Recommendation: the company, or Maggie.
+3. Who owns the Google Cloud project. Recommendation: the company, or Maggie.
 4. What Clay uses Deal data for.
 5. `#crm-requests` exists and Sagar and Maggie are in it.
 
@@ -445,7 +450,9 @@ Assumptions to verify during build:
 - Attio status options for `stage` are readable with the object-configuration scope.
 - Slack's `external_select` "create new" pattern (an option carrying the typed text)
   behaves as expected on the free plan.
-- Workers Free 10 ms CPU is enough per request. Expected: under 2 ms; fetch waits do
+- Cloud Run cold starts (roughly 0.9-2.6 s for a lean Node container) fit inside Slack's
+  3-second window. Mitigated by a Cloud Scheduler warm ping on business hours; see the
+  runbook. Expected steady-state response: well under 300 ms; fetch waits do
   not count.
 
 ## 15. Sources
@@ -462,8 +469,9 @@ Assumptions to verify during build:
 - Attio Slack app: https://attio.com/help/apps/automations-apps/slack-app
 - Slack free plan limitations: https://slack.com/help/articles/27204752526611-Feature-limitations-on-the-free-version-of-Slack
 - Slack slash commands: https://api.slack.com/interactivity/slash-commands
-- Cloudflare Workers pricing and limits: https://developers.cloudflare.com/workers/platform/pricing/
-- Cloudflare KV pricing: https://developers.cloudflare.com/kv/platform/pricing
+- Cloud Run pricing and free tier: https://cloud.google.com/run/pricing
+- Firestore pricing and free quota: https://cloud.google.com/firestore/pricing
+- Cloud Tasks pricing: https://cloud.google.com/tasks/pricing
 - Clay, which actions cost credits: https://www.clay.com/faq/which-actions-cost-credits-or-are-free
 - Clay Attio integration: https://university.clay.com/docs/attio-integration
 - Clay scheduled sources: https://university.clay.com/docs/scheduled-sources
