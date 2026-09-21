@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { processSubmission, type PipelineDeps } from '../src/pipeline';
-import { fakeSlack } from './helpers/fake-slack';
-import { fakeAttio } from './helpers/fake-attio';
-import { fakeKv } from './helpers/fake-kv';
-import { createStore } from '../src/store/kv';
-import type { StateValues } from '../src/slack/types';
+import { processSubmission, type PipelineDeps } from '../src/pipeline.ts';
+import { fakeSlack } from './helpers/fake-slack.ts';
+import { fakeAttio } from './helpers/fake-attio.ts';
+import { fakeKv } from './helpers/fake-kv.ts';
+import { createStore } from '../src/store/kv.ts';
+import type { StateValues } from '../src/slack/types.ts';
 
 const config = { allowedUsers: new Set(['U1']), summaryChannel: 'C1', defaultOwnerEmail: 'maggie@example.com', timezone: 'America/Los_Angeles' };
 const maggie = { member_id: 'm-1', email: 'maggie@example.com', first_name: 'Maggie', last_name: 'Q' };

@@ -1,4 +1,4 @@
-import type { AttioRecord } from './client';
+import type { AttioRecord } from './client.ts';
 
 export function firstValue(rec: AttioRecord, attr: string): any | null {
   const arr = rec.values[attr];

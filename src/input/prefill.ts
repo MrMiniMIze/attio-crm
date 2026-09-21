@@ -1,4 +1,4 @@
-import type { Prefill, StateValues } from '../slack/types';
+import type { Prefill, StateValues } from '../slack/types.ts';
 
 export function prefillFromState(values: StateValues): Prefill {
   const out: Prefill = {};

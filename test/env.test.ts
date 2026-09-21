@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseConfig, type Env } from '../src/env';
+import { parseConfig, type Env } from '../src/env.ts';
 
 const base = {
   KV: {} as KVNamespace,

@@ -1,9 +1,9 @@
-import type { StateValues } from '../slack/types';
-import { formKindFromCallback } from '../slack/views';
-import type { AttioMember } from '../attio/client';
+import type { StateValues } from '../slack/types.ts';
+import { formKindFromCallback } from '../slack/views.ts';
+import type { AttioMember } from '../attio/client.ts';
 import {
   parseActionDocument, type Action, type ActionDocument, type ActorRef, type CompanyRef, type PersonRef,
-} from '../contract/action-document';
+} from '../contract/action-document.ts';
 
 export interface ModalSource { requester: string; received_at: string; permalink: string | null }
 export interface MapperContext { members: AttioMember[]; defaultOwnerEmail: string }
@@ -50,7 +50,8 @@ export function parseRecordPick(value: string, label: string): { company: Compan
 }
 
 class Values {
-  constructor(private readonly values: StateValues) {}
+  private readonly values: StateValues;
+  constructor(values: StateValues) { this.values = values; }
   private raw(block: string) { return this.values[block]?.[block]; }
   text(block: string): string | null {
     const v = this.raw(block)?.value;

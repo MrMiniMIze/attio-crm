@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { createSlackApi, SlackError } from '../../src/slack/api';
-import { scriptedFetch } from '../helpers/fetch-mock';
+import { createSlackApi, SlackError } from '../../src/slack/api.ts';
+import { scriptedFetch } from '../helpers/fetch-mock.ts';
 
 const view = { type: 'modal' as const, callback_id: 'x', title: { type: 'plain_text' as const, text: 'T' }, blocks: [] };
 

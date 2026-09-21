@@ -1,10 +1,10 @@
-import { parseConfig, type Env } from './env';
-import { verifySlackSignature } from './slack/verify';
-import { handleCommand, type CommandForm } from './slack/command';
-import { handleInteraction } from './slack/interact';
-import { createAttioClient } from './attio/client';
-import { createSlackApi } from './slack/api';
-import { createStore } from './store/kv';
+import { parseConfig, type Env } from './env.ts';
+import { verifySlackSignature } from './slack/verify.ts';
+import { handleCommand, type CommandForm } from './slack/command.ts';
+import { handleInteraction } from './slack/interact.ts';
+import { createAttioClient } from './attio/client.ts';
+import { createSlackApi } from './slack/api.ts';
+import { createStore } from './store/kv.ts';
 
 function deps(env: Env) {
   return {

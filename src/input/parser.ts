@@ -1,5 +1,5 @@
-import type { FormKind, Prefill } from '../slack/types';
-import { isDomain } from './from-modal';
+import type { FormKind, Prefill } from '../slack/types.ts';
+import { isDomain } from './from-modal.ts';
 
 export interface ParsedCommand { kind: FormKind | 'chooser'; prefill: Prefill }
 

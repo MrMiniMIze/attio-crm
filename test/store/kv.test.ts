@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { createStore, type SubmissionRecord } from '../../src/store/kv';
-import { fakeKv } from '../helpers/fake-kv';
+import { createStore, type SubmissionRecord } from '../../src/store/kv.ts';
+import { fakeKv } from '../helpers/fake-kv.ts';
 
 const rec: SubmissionRecord = {
   submission_id: 'sub-1', form_kind: 'lead', requester: 'U1', created_at: '2026-09-04T23:45:00.000Z',

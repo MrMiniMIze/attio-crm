@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { prefillFromState } from '../../src/input/prefill';
-import type { StateValues } from '../../src/slack/types';
+import { prefillFromState } from '../../src/input/prefill.ts';
+import type { StateValues } from '../../src/slack/types.ts';
 
 describe('prefillFromState', () => {
   it('captures filled fields and skips empty ones', () => {

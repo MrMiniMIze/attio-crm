@@ -54,6 +54,7 @@ Every submission posts a card in `#crm-requests`. Click **Edit** on the card to 
 | "This command is limited to the sales team." | Add the Slack member ID to `ALLOWED_USERS` and redeploy |
 | Nothing posts to `#crm-requests` | Bot not in channel, or `SUMMARY_CHANNEL` is a name instead of an ID |
 | Edit says the submission expired | Submissions are kept 30 days; add it again with `/crm` |
+| Started it with `node src/index.ts` and nothing listens, or Node complains about bindings | It is a Cloudflare Worker, not a Node server. Run it locally with `npm run dev` and for real with `npm run deploy` |
 
 Logs: `npx wrangler tail attio-crm`. Cloudflare dashboard > Workers > attio-crm > Observability.
 

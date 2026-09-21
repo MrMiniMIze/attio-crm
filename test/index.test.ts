@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import worker from '../src/index';
-import type { Env } from '../src/env';
-import { fakeKv } from './helpers/fake-kv';
+import worker from '../src/index.ts';
+import type { Env } from '../src/env.ts';
+import { fakeKv } from './helpers/fake-kv.ts';
 
 async function signed(path: string, body: string, secret = 's', ts = String(Math.floor(Date.now() / 1000))) {
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);

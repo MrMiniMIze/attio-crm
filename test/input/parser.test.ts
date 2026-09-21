@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseCommandText, ruleParser } from '../../src/input/parser';
+import { parseCommandText, ruleParser } from '../../src/input/parser.ts';
 
 const today = '2026-09-04';
 

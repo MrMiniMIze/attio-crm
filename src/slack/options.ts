@@ -1,6 +1,6 @@
-import type { AttioClient, AttioSearchHit } from '../attio/client';
-import type { SlackOption } from './types';
-import { truncate } from './views';
+import type { AttioClient, AttioSearchHit } from '../attio/client.ts';
+import type { SlackOption } from './types.ts';
+import { truncate } from './views.ts';
 
 export interface BlockSuggestion { action_id: string; value: string }
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { dropRepeatedTasksAndNotes } from '../../src/input/edit-diff';
-import type { ActionDocument } from '../../src/contract/action-document';
+import { dropRepeatedTasksAndNotes } from '../../src/input/edit-diff.ts';
+import type { ActionDocument } from '../../src/contract/action-document.ts';
 
 const source = { kind: 'modal' as const, requester: 'U1', permalink: null, received_at: 't', raw: '{}' };
 const company = { record_id: null, name: null, domain: 'cozeva.com' };

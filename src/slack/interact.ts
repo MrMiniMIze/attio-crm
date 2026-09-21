@@ -1,11 +1,11 @@
-import { handleBlockSuggestion } from './options';
-import { loadFormContext } from './form-context';
-import { buildFormView, decodeMetadata, type ViewMetadata } from './views';
-import { validateSubmission } from './validate';
-import { NOT_ALLOWED_TEXT } from './command';
-import { processSubmission, type PipelineDeps } from '../pipeline';
-import { todayIso } from '../util/dates';
-import type { FormKind, View } from './types';
+import { handleBlockSuggestion } from './options.ts';
+import { loadFormContext } from './form-context.ts';
+import { buildFormView, decodeMetadata, type ViewMetadata } from './views.ts';
+import { validateSubmission } from './validate.ts';
+import { NOT_ALLOWED_TEXT } from './command.ts';
+import { processSubmission, type PipelineDeps } from '../pipeline.ts';
+import { todayIso } from '../util/dates.ts';
+import type { FormKind, View } from './types.ts';
 
 export type InteractionDeps = PipelineDeps;
 

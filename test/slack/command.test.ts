@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { handleCommand } from '../../src/slack/command';
-import { fakeSlack } from '../helpers/fake-slack';
-import { fakeAttio } from '../helpers/fake-attio';
-import { fakeKv } from '../helpers/fake-kv';
-import { fakeCtx } from '../helpers/fake-ctx';
-import { createStore } from '../../src/store/kv';
+import { handleCommand } from '../../src/slack/command.ts';
+import { fakeSlack } from '../helpers/fake-slack.ts';
+import { fakeAttio } from '../helpers/fake-attio.ts';
+import { fakeKv } from '../helpers/fake-kv.ts';
+import { fakeCtx } from '../helpers/fake-ctx.ts';
+import { createStore } from '../../src/store/kv.ts';
 
 const config = { allowedUsers: new Set(['U1']), summaryChannel: 'C1', defaultOwnerEmail: 'maggie@example.com', timezone: 'America/Los_Angeles' };
 const form = (text: string, user_id = 'U1') => ({ command: '/crm', text, user_id, trigger_id: 'T1', channel_id: 'D1', response_url: 'https://hooks/r' });

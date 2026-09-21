@@ -71,6 +71,13 @@ npm run typecheck                 # tsc --noEmit
 npm run dev                       # wrangler dev on http://localhost:8787
 ```
 
+This is a Cloudflare Worker, not a Node server: `env.KV` and `ctx.waitUntil` only exist in
+the Workers runtime, so `node src/index.ts` is not a way to run it. The source is still
+Node compatible for poking at a single module: relative imports carry explicit `.ts`
+extensions and the code avoids TypeScript syntax that Node's type stripping cannot handle
+(parameter properties, enums), so `node --experimental-strip-types` on Node 22 and plain
+`node` on Node 24 can import any file under `src/`.
+
 Slack has to reach the Worker over the public internet, so interactive testing uses a
 deployed dev Worker (`npm run deploy`) rather than localhost. The full sandbox and launch
 procedure, including the Slack app manifest, is in [`docs/runbook.md`](docs/runbook.md).

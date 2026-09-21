@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { createAttioClient } from '../../src/attio/client';
-import { scriptedFetch } from '../helpers/fetch-mock';
+import { createAttioClient } from '../../src/attio/client.ts';
+import { scriptedFetch } from '../helpers/fetch-mock.ts';
 
 const raw = (record_id: string, values: Record<string, unknown[]>) => ({
   id: { workspace_id: 'w', object_id: 'o', record_id }, created_at: '2026-09-04T20:00:00.000Z',
