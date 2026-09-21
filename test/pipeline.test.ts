@@ -2,8 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { processSubmission, type PipelineDeps } from '../src/pipeline';
 import { fakeSlack } from './helpers/fake-slack';
 import { fakeAttio } from './helpers/fake-attio';
-import { fakeKv } from './helpers/fake-kv';
-import { createStore } from '../src/store/kv';
+import { createMemoryStore } from '../src/store/store';
 import type { StateValues } from '../src/slack/types';
 
 const config = { allowedUsers: new Set(['U1']), summaryChannel: 'C1', defaultOwnerEmail: 'maggie@example.com', timezone: 'America/Los_Angeles' };
@@ -25,7 +24,7 @@ const metadata = { channel_id: 'D1', requester: 'U1', submission_id: null, respo
 function setup() {
   const slack = fakeSlack();
   const attio = fakeAttio({ members: [maggie], now });
-  const store = createStore(fakeKv());
+  const store = createMemoryStore();
   let n = 0;
   const deps: PipelineDeps = { slack: slack.api, attio: attio.client, store, config, now, newId: () => `sub-${++n}` };
   return { slack, attio, store, deps };
@@ -44,7 +43,7 @@ describe('processSubmission', () => {
     expect((sourceNotes[0]!.args[0] as any).markdown).toContain('https://slack.test/p/1725.1');
     const update = slack.calls[2]!.args as [string, string, string, any[]];
     expect(update[0]).toBe('C1'); expect(update[1]).toBe('1725.1');
-    expect(JSON.stringify(update[3])).toContain('edit_submission');
+    expect(JSON.stringify(update[3])).toContain('crm_edit_submission');
 
     const stored = await store.getSubmission('sub-1');
     expect(stored?.form_kind).toBe('lead');
@@ -100,7 +99,7 @@ describe('processSubmission', () => {
     await processSubmission({ view: { id: 'V1', callback_id: 'crm_lead', private_metadata: '{}', state: { values: leadValues } }, user: { id: 'U1', name: 'Sagar' }, metadata }, deps);
     const updates = slack.calls.filter((c) => c.method === 'chatUpdate');
     expect(updates).toHaveLength(1);
-    expect(JSON.stringify(updates[0]!.args[3])).toContain('edit_submission');
+    expect(JSON.stringify(updates[0]!.args[3])).toContain('crm_edit_submission');
     expect(slack.calls.at(-1)!.args[1]).toMatch(/^Attio was updated, but a follow-up step failed: kv quota/);
   });
 });

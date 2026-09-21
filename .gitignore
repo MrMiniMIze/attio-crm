@@ -4,12 +4,10 @@ node_modules/
 # Secrets and local configuration (the committed example is the only template)
 .env
 .env.*
-.dev.vars
-.dev.vars.*
-!.dev.vars.example
+.env.example.local
+!.env.example
 
-# Cloudflare and build output
-.wrangler/
+# Build output
 dist/
 *.tsbuildinfo
 

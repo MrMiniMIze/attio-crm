@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="1000" height="500" role="img" aria-label="One request travels left to right across four lanes: Slack, the Cloudflare Worker, Attio and Clay. Sagar types /crm, the Worker verifies the request and opens a form whose pickers search Attio live, Sagar fills it in and submits, the submission becomes an ordered action list, the Worker writes to Attio over REST and posts a summary card with an Edit button that reopens the form, and Clay imports from Attio daily.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="1000" height="500" role="img" aria-label="One request travels left to right across four lanes: Slack, the Cloud Run service, Attio and Clay. Sagar types /crm, the service verifies the request and opens a form whose pickers search Attio live, Sagar fills it in and submits, the submission becomes an ordered action list, the service writes to Attio over REST and posts a summary card with an Edit button that reopens the form, and Clay imports from Attio daily.">
   <style>
     .bg { fill: #f3f5f8; }
     .lane { fill: #1b2432; fill-opacity: 0.045; }
@@ -23,8 +23,8 @@
   <rect class="lane" x="0" y="280" width="1000" height="110"/>
   <rect class="lane" x="0" y="400" width="1000" height="90"/>
   <text class="lbl" x="16" y="99">Slack</text>
-  <text class="lbl" x="16" y="212">Cloudflare</text>
-  <text class="lbl" x="16" y="226">Worker</text>
+  <text class="lbl" x="16" y="212">Cloud Run</text>
+  <text class="lbl" x="16" y="226">+ Tasks</text>
   <text class="lbl" x="16" y="339">Attio</text>
   <text class="lbl" x="16" y="449">Clay</text>
 

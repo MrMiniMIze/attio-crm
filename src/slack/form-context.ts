@@ -1,5 +1,5 @@
 import type { AttioClient, AttioMember } from '../attio/client';
-import type { Store } from '../store/kv';
+import type { Store } from '../store/store';
 import type { Config } from '../env';
 import type { FormContext, ViewMetadata } from './views';
 

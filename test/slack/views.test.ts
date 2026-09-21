@@ -21,11 +21,11 @@ describe('views', () => {
     expect(decodeMetadata(encodeMetadata(meta))).toEqual(meta);
   });
 
-  it('chooser has five buttons with choose_* action ids', () => {
+  it('chooser has five buttons with crm_choose_* action ids', () => {
     const v = buildChooserView(meta);
     expect(v.callback_id).toBe('crm_chooser');
     const actions = v.blocks.find((b) => b.type === 'actions') as any;
-    expect(actions.elements.map((e: any) => e.action_id)).toEqual(['choose_lead', 'choose_hunt', 'choose_deal', 'choose_task', 'choose_note']);
+    expect(actions.elements.map((e: any) => e.action_id)).toEqual(['crm_choose_lead', 'crm_choose_hunt', 'crm_choose_deal', 'crm_choose_task', 'crm_choose_note']);
   });
 
   it('lead form has the expected blocks and defaults', () => {
@@ -88,7 +88,7 @@ describe('views', () => {
     expect(text).toContain('✔ <https://app.attio.com/x/d-1|Deal Cozeva>: created, stage Lead, owner Maggie');
     expect(text).toContain('✖ Follow up: failed (Attio 400: bad deadline)');
     const actions = blocks.find((b) => b.type === 'actions') as any;
-    expect(actions.elements[0]).toMatchObject({ action_id: 'edit_submission', value: 'sub-1' });
+    expect(actions.elements[0]).toMatchObject({ action_id: 'crm_edit_submission', value: 'sub-1' });
   });
 
   it('truncate respects Slack limits', () => {

@@ -154,7 +154,7 @@ function fields(kind: FormKind, ctx: FormContext): Field[] {
 
 export function buildChooserView(meta: ViewMetadata): View {
   const button = (kind: FormKind) => ({
-    type: 'button', action_id: `choose_${kind}`, text: plain(FORM_TITLES[kind]), value: kind,
+    type: 'button', action_id: `crm_choose_${kind}`, text: plain(FORM_TITLES[kind]), value: kind,
   });
   return {
     type: 'modal',
@@ -205,7 +205,7 @@ export function buildSummaryBlocks(input: { requesterName: string; whenIso: stri
     { type: 'section', text: { type: 'mrkdwn', text: header } },
     { type: 'section', text: { type: 'mrkdwn', text: truncate(lines || '_nothing to do_', 2900) } },
     { type: 'actions', block_id: 'summary_actions', elements: [
-      { type: 'button', action_id: 'edit_submission', text: plain('Edit'), value: input.submissionId },
+      { type: 'button', action_id: 'crm_edit_submission', text: plain('Edit'), value: input.submissionId },
     ] },
   ];
 }

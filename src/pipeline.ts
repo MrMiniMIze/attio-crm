@@ -1,7 +1,7 @@
 import type { AttioClient } from './attio/client';
 import { executeDocument } from './attio/writer';
 import type { SlackApi } from './slack/api';
-import type { Store, SubmissionRecord } from './store/kv';
+import type { Store, SubmissionRecord } from './store/store';
 import type { Config } from './env';
 import { fromModalSubmission, type SubmittedView } from './input/from-modal';
 import { dropRepeatedTasksAndNotes } from './input/edit-diff';
@@ -88,4 +88,29 @@ export async function processSubmission(input: SubmissionInput, deps: PipelineDe
     if (card) await deps.slack.chatUpdate(card.channel, card.ts, text, [{ type: 'section', text: { type: 'mrkdwn', text: `✖ ${text}` } }]).catch(() => {});
     if (metadata.response_url) await deps.slack.respond(metadata.response_url, text).catch(() => {});
   }
+}
+
+/**
+ * What actually travels through the queue. Deliberately not `SubmissionInput`:
+ * resolving the requester's display name is a Slack API call, and it belongs
+ * on the delivery side rather than inside Slack's three-second window.
+ */
+export interface QueuedSubmission {
+  view: SubmittedView & { id: string };
+  user: { id: string; fallback_name: string };
+  metadata: ViewMetadata;
+}
+
+/** Resolve the requester's name, then run the writes. Shared by the inline
+ *  queue (dev and tests) and by the Cloud Tasks delivery route. */
+export async function runQueuedSubmission(job: QueuedSubmission, deps: PipelineDeps): Promise<void> {
+  const info = await deps.slack.usersInfo(job.user.id).catch(() => null);
+  await processSubmission(
+    {
+      view: job.view,
+      user: { id: job.user.id, name: info?.name ?? job.user.fallback_name },
+      metadata: job.metadata,
+    },
+    deps,
+  );
 }
