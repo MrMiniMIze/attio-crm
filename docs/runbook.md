@@ -13,10 +13,28 @@
    (channel details > copy ID), `DEFAULT_OWNER_EMAIL` = Maggie's Attio login email,
    `ALLOWED_USERS` = Slack member IDs for Sagar and Maggie (profile > More > Copy member ID).
 5. **Deploy**: `npm run deploy`; note the `*.workers.dev` URL.
-6. **Slack app** (Maggie): api.slack.com/apps > Create New App > From a manifest > paste
-   `slack-manifest.json` with `WORKER_HOST` replaced > Install to Workspace. Copy the Signing
-   Secret and Bot User OAuth Token into step 3, then `npm run deploy` again.
-7. Invite the bot to `#crm-requests`: `/invite @Attio CRM`.
+6. **Slack app** (Maggie). A Slack app holds no code; it is a bot identity plus pointers to
+   URLs. Pick one path:
+
+   **6a. New app.** api.slack.com/apps > Create New App > From a manifest > paste
+   `slack-manifest.json` with `WORKER_HOST` replaced > Install to Workspace.
+
+   **6b. Existing bot the company already built.** Open that app at api.slack.com/apps
+   > App Manifest, and add the `slash_commands`, `interactivity` and `oauth_config.scopes.bot`
+   blocks from `slack-manifest.json` (with `WORKER_HOST` replaced) to the existing manifest.
+   Save, then Reinstall to Workspace so the new scopes take effect. The summary cards will
+   post under the existing bot's name.
+   Check first: (1) the app must be one the company built, not a third party app it
+   installed, since those cannot be edited; (2) Slack allows one Interactivity URL per app,
+   so if the existing bot already receives button clicks or modal submits at its own server,
+   either that server forwards requests whose `callback_id` starts with `crm_` or whose
+   `action_id` is `company`, `deal`, `record`, `choose_*` or `edit_submission` to the Worker
+   with the raw body and headers unchanged, or use path 6a.
+
+   Either way, copy the app's Signing Secret and Bot User OAuth Token into step 3, then
+   `npm run deploy` again.
+7. Invite the bot to `#crm-requests` (`/invite @<bot name>`), or keep `chat:write.public`
+   so it can post without an invite.
 8. Smoke test: one submission per form with `[TEST]` names, check Attio, delete the test records.
    Section 5 has the full matrix; run it in a sandbox first.
 9. Send Sagar the one page guide (section 3).
@@ -95,3 +113,18 @@ company data.
    `chat.getPermalink` accepted the calls); and the card posts to the channel. Write the
    results at the bottom of this file.
 6. Delete every `[TEST]` record in the sandbox Attio.
+
+## 6. Who owns what after handover
+
+Nothing in production depends on the builder's accounts.
+
+| Piece | Owner | How it gets there |
+|---|---|---|
+| Code | The company's GitHub (or Maggie's) | Transfer the repository, or clone it and push to their own org |
+| Worker, KV namespace, secrets, `workers.dev` URL | The company's Cloudflare account | `npx wrangler login` and `npm run deploy` from that account |
+| Slack app or existing bot | The company's Slack workspace | Step 6 above |
+| Attio access token | Maggie, as Attio workspace admin | Step 2 above |
+| Clay import | The company's Clay account | Section 2 above |
+
+The builder's free Slack and Attio workspaces from section 5 exist only for the smoke test
+and can be deleted afterwards.
