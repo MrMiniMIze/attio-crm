@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { todayIso, deadlineIso } from '../../src/util/dates';
+import { todayIso, deadlineIso } from '../../src/util/dates.ts';
 
 describe('dates', () => {
   it('todayIso uses the requested timezone', () => {

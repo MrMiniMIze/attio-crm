@@ -1,4 +1,4 @@
-import type { Action, ActionDocument } from '../contract/action-document';
+import type { Action, ActionDocument } from '../contract/action-document.ts';
 
 /** Deterministic JSON with keys sorted at every nesting level. */
 function stableStringify(value: unknown): string {

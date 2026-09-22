@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { fromModalSubmission, splitName, parseCompanyPick, isDomain, type MapperContext } from '../../src/input/from-modal';
-import type { StateValues } from '../../src/slack/types';
+import { fromModalSubmission, splitName, parseCompanyPick, isDomain, type MapperContext } from '../../src/input/from-modal.ts';
+import type { StateValues } from '../../src/slack/types.ts';
 
 const ctx: MapperContext = {
   members: [{ member_id: 'm-1', email: 'maggie@example.com', first_name: 'Maggie', last_name: 'Q' }],

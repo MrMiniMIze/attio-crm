@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { validateSubmission } from '../../src/slack/validate';
-import type { StateValues } from '../../src/slack/types';
+import { validateSubmission } from '../../src/slack/validate.ts';
+import type { StateValues } from '../../src/slack/types.ts';
 
 const today = '2026-09-04';
 const text = (v: string | null) => ({ type: 'plain_text_input', value: v });

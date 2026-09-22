@@ -1,4 +1,4 @@
-import type { QueuedSubmission } from '../pipeline';
+import type { QueuedSubmission } from '../pipeline.ts';
 
 /**
  * Hands a submission off to be written after the response has gone back to

@@ -1,6 +1,6 @@
-import type { ActionDocument } from '../contract/action-document';
-import type { WriteReport } from '../contract/write-report';
-import type { FormKind, Prefill } from '../slack/types';
+import type { ActionDocument } from '../contract/action-document.ts';
+import type { WriteReport } from '../contract/write-report.ts';
+import type { FormKind, Prefill } from '../slack/types.ts';
 
 export interface SubmissionRecord {
   submission_id: string;

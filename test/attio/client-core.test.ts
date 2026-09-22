@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { createAttioClient, AttioError } from '../../src/attio/client';
-import { recordName, dealStage } from '../../src/attio/records';
-import { scriptedFetch } from '../helpers/fetch-mock';
+import { createAttioClient, AttioError } from '../../src/attio/client.ts';
+import { recordName, dealStage } from '../../src/attio/records.ts';
+import { scriptedFetch } from '../helpers/fetch-mock.ts';
 
 const rawCompany = {
   id: { workspace_id: 'w', object_id: 'o', record_id: 'c-1' },

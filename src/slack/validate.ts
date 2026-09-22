@@ -1,4 +1,4 @@
-import type { StateValues } from './types';
+import type { StateValues } from './types.ts';
 
 const get = (values: StateValues, block: string) => values[block]?.[block];
 const text = (values: StateValues, block: string) => (get(values, block)?.value ?? '').trim();

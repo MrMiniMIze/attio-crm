@@ -1,5 +1,5 @@
 import { Firestore, Timestamp } from '@google-cloud/firestore';
-import { DEDUPE_TTL, SUBMISSION_TTL, type Store, type SubmissionRecord } from './store';
+import { DEDUPE_TTL, SUBMISSION_TTL, type Store, type SubmissionRecord } from './store.ts';
 
 const ALREADY_EXISTS = 6;
 

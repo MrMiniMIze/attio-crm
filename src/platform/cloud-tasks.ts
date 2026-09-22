@@ -1,6 +1,6 @@
 import type { CloudTasksClient } from '@google-cloud/tasks';
-import type { Queue } from './queue';
-import type { QueuedSubmission } from '../pipeline';
+import type { Queue } from './queue.ts';
+import type { QueuedSubmission } from '../pipeline.ts';
 
 const ALREADY_EXISTS = 6;
 

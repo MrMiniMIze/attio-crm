@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { createRouter } from '../src/router';
-import { createMemoryStore } from '../src/store/store';
-import type { Env } from '../src/env';
+import { createRouter } from '../src/router.ts';
+import { createMemoryStore } from '../src/store/store.ts';
+import type { Env } from '../src/env.ts';
 
 async function signed(path: string, body: string, secret = 's', ts = String(Math.floor(Date.now() / 1000))) {
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);

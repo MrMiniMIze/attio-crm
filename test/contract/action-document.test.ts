@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseActionDocument } from '../../src/contract/action-document';
+import { parseActionDocument } from '../../src/contract/action-document.ts';
 
 const source = { kind: 'modal', requester: 'U1', permalink: null, received_at: '2026-09-04T23:45:00.000Z', raw: '{}' };
 const company = { record_id: null, name: 'Cozeva', domain: 'cozeva.com' };

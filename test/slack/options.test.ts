@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { handleBlockSuggestion } from '../../src/slack/options';
-import { fakeAttio } from '../helpers/fake-attio';
+import { handleBlockSuggestion } from '../../src/slack/options.ts';
+import { fakeAttio } from '../helpers/fake-attio.ts';
 
 const hits = {
   coz: [

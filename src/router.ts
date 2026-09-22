@@ -1,13 +1,13 @@
-import { parseConfig, type Env } from './env';
-import { verifySlackSignature } from './slack/verify';
-import { handleCommand, type CommandForm } from './slack/command';
-import { handleInteraction } from './slack/interact';
-import { createAttioClient } from './attio/client';
-import { createSlackApi } from './slack/api';
-import { verifyQueueToken } from './platform/oidc';
-import { createInlineQueue, type Queue } from './platform/queue';
-import { runQueuedSubmission, type QueuedSubmission } from './pipeline';
-import type { Store } from './store/store';
+import { parseConfig, type Env } from './env.ts';
+import { verifySlackSignature } from './slack/verify.ts';
+import { handleCommand, type CommandForm } from './slack/command.ts';
+import { handleInteraction } from './slack/interact.ts';
+import { createAttioClient } from './attio/client.ts';
+import { createSlackApi } from './slack/api.ts';
+import { verifyQueueToken } from './platform/oidc.ts';
+import { createInlineQueue, type Queue } from './platform/queue.ts';
+import { runQueuedSubmission, type QueuedSubmission } from './pipeline.ts';
+import type { Store } from './store/store.ts';
 
 export interface RouterOptions {
   store: Store;

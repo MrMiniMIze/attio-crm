@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { describeDocument } from '../../src/contract/describe';
+import { describeDocument } from '../../src/contract/describe.ts';
 
 const source = { kind: 'modal' as const, requester: 'U1', permalink: null, received_at: 't', raw: '{}' };
 const company = { record_id: null, name: 'Cozeva', domain: 'cozeva.com' };

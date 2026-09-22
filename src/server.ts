@@ -1,10 +1,10 @@
 import { createServer, type IncomingMessage } from 'node:http';
-import { readEnv } from './env';
-import { createRouter } from './router';
-import { createFirestoreStore } from './store/firestore';
-import { createMemoryStore } from './store/store';
-import { createCloudTasksQueue } from './platform/cloud-tasks';
-import type { Queue } from './platform/queue';
+import { readEnv } from './env.ts';
+import { createRouter } from './router.ts';
+import { createFirestoreStore } from './store/firestore.ts';
+import { createMemoryStore } from './store/store.ts';
+import { createCloudTasksQueue } from './platform/cloud-tasks.ts';
+import type { Queue } from './platform/queue.ts';
 
 const env = readEnv();
 const port = Number(process.env.PORT ?? 8080);

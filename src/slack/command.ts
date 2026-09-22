@@ -1,8 +1,8 @@
-import type { SlackApi } from './api';
-import { loadFormContext, type ContextDeps } from './form-context';
-import { buildChooserView, buildFormView, type ViewMetadata } from './views';
-import { parseCommandText } from '../input/parser';
-import { todayIso } from '../util/dates';
+import type { SlackApi } from './api.ts';
+import { loadFormContext, type ContextDeps } from './form-context.ts';
+import { buildChooserView, buildFormView, type ViewMetadata } from './views.ts';
+import { parseCommandText } from '../input/parser.ts';
+import { todayIso } from '../util/dates.ts';
 
 export interface CommandForm {
   command: string; text: string; user_id: string; trigger_id: string; channel_id: string; response_url: string;

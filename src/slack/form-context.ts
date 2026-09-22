@@ -1,7 +1,7 @@
-import type { AttioClient, AttioMember } from '../attio/client';
-import type { Store } from '../store/store';
-import type { Config } from '../env';
-import type { FormContext, ViewMetadata } from './views';
+import type { AttioClient, AttioMember } from '../attio/client.ts';
+import type { Store } from '../store/store.ts';
+import type { Config } from '../env.ts';
+import type { FormContext, ViewMetadata } from './views.ts';
 
 export interface ContextDeps { attio: AttioClient; store: Store; config: Config }
 

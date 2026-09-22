@@ -1,8 +1,8 @@
-import type { AttioClient, AttioMember, AttioRecord } from './client';
-import { dealStage, recordName } from './records';
-import { deadlineIso } from '../util/dates';
-import type { Action, ActionDocument, ActorRef, CompanyRef, PersonRef } from '../contract/action-document';
-import type { AttioObject, WriteItem, WriteReport } from '../contract/write-report';
+import type { AttioClient, AttioMember, AttioRecord } from './client.ts';
+import { dealStage, recordName } from './records.ts';
+import { deadlineIso } from '../util/dates.ts';
+import type { Action, ActionDocument, ActorRef, CompanyRef, PersonRef } from '../contract/action-document.ts';
+import type { AttioObject, WriteItem, WriteReport } from '../contract/write-report.ts';
 
 export interface WriterOptions {
   defaultOwnerEmail: string;
@@ -23,8 +23,12 @@ class Run {
   lastDeal: AttioRecord | null = null;
   private readonly closed: RegExp;
   private readonly now: () => Date;
+  private readonly attio: AttioClient;
+  private readonly opts: WriterOptions;
 
-  constructor(private readonly attio: AttioClient, private readonly opts: WriterOptions) {
+  constructor(attio: AttioClient, opts: WriterOptions) {
+    this.attio = attio;
+    this.opts = opts;
     this.closed = opts.closedStagePattern ?? /won|lost/i;
     this.now = opts.now ?? (() => new Date());
   }

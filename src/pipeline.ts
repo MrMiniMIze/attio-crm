@@ -1,15 +1,15 @@
-import type { AttioClient } from './attio/client';
-import { executeDocument } from './attio/writer';
-import type { SlackApi } from './slack/api';
-import type { Store, SubmissionRecord } from './store/store';
-import type { Config } from './env';
-import { fromModalSubmission, type SubmittedView } from './input/from-modal';
-import { dropRepeatedTasksAndNotes } from './input/edit-diff';
-import { prefillFromState } from './input/prefill';
-import { describeDocument } from './contract/describe';
-import { buildSummaryBlocks, formKindFromCallback, summaryText, type ViewMetadata } from './slack/views';
-import { loadMembers } from './slack/form-context';
-import { todayIso } from './util/dates';
+import type { AttioClient } from './attio/client.ts';
+import { executeDocument } from './attio/writer.ts';
+import type { SlackApi } from './slack/api.ts';
+import type { Store, SubmissionRecord } from './store/store.ts';
+import type { Config } from './env.ts';
+import { fromModalSubmission, type SubmittedView } from './input/from-modal.ts';
+import { dropRepeatedTasksAndNotes } from './input/edit-diff.ts';
+import { prefillFromState } from './input/prefill.ts';
+import { describeDocument } from './contract/describe.ts';
+import { buildSummaryBlocks, formKindFromCallback, summaryText, type ViewMetadata } from './slack/views.ts';
+import { loadMembers } from './slack/form-context.ts';
+import { todayIso } from './util/dates.ts';
 
 export interface PipelineDeps {
   attio: AttioClient; slack: SlackApi; store: Store; config: Config;

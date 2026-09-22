@@ -1,5 +1,5 @@
-import type { Block, FormKind, PlainText, Prefill, SlackOption, View } from './types';
-import type { WriteReport, WriteItem } from '../contract/write-report';
+import type { Block, FormKind, PlainText, Prefill, SlackOption, View } from './types.ts';
+import type { WriteReport, WriteItem } from '../contract/write-report.ts';
 
 export interface ViewMetadata {
   channel_id: string;

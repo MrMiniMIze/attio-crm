@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   buildChooserView, buildFormView, buildSummaryBlocks, encodeMetadata, decodeMetadata,
   formKindFromCallback, truncate, type FormContext,
-} from '../../src/slack/views';
-import type { WriteReport } from '../../src/contract/write-report';
+} from '../../src/slack/views.ts';
+import type { WriteReport } from '../../src/contract/write-report.ts';
 
 const meta = { channel_id: 'C1', requester: 'U1', submission_id: null, response_url: 'https://hooks/x' };
 const ctx: FormContext = {

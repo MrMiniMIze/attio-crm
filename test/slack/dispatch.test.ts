@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isCrmPayload } from '../../src/slack/dispatch';
+import { isCrmPayload } from '../../src/slack/dispatch.ts';
 
 describe('isCrmPayload', () => {
   it('claims a submission of one of our modals', () => {

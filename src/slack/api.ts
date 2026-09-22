@@ -1,4 +1,4 @@
-import type { Block, View } from './types';
+import type { Block, View } from './types.ts';
 
 export interface SlackApi {
   viewsOpen(triggerId: string, view: View): Promise<{ view_id: string }>;
@@ -11,9 +11,13 @@ export interface SlackApi {
 }
 
 export class SlackError extends Error {
-  constructor(public method: string, public error: string) {
+  method: string;
+  error: string;
+  constructor(method: string, error: string) {
     super(`Slack ${method} failed: ${error}`);
     this.name = 'SlackError';
+    this.method = method;
+    this.error = error;
   }
 }
 

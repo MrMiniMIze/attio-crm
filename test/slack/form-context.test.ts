@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { loadFormContext, loadStages } from '../../src/slack/form-context';
-import { fakeAttio } from '../helpers/fake-attio';
-import { createMemoryStore } from '../../src/store/store';
+import { loadFormContext, loadStages } from '../../src/slack/form-context.ts';
+import { fakeAttio } from '../helpers/fake-attio.ts';
+import { createMemoryStore } from '../../src/store/store.ts';
 
 const config = { allowedUsers: new Set(['U1']), summaryChannel: 'C1', defaultOwnerEmail: 'maggie@example.com', timezone: 'America/Los_Angeles' };
 const meta = { channel_id: 'D1', requester: 'U1', submission_id: null, response_url: null };

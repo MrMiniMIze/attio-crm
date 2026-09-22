@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { executeDocument, type WriterOptions } from '../../src/attio/writer';
-import { fakeAttio, rec } from '../helpers/fake-attio';
-import type { ActionDocument } from '../../src/contract/action-document';
+import { executeDocument, type WriterOptions } from '../../src/attio/writer.ts';
+import { fakeAttio, rec } from '../helpers/fake-attio.ts';
+import type { ActionDocument } from '../../src/contract/action-document.ts';
 
 const maggie = { member_id: 'm-1', email: 'maggie@example.com', first_name: 'Maggie', last_name: 'Q' };
 const opts: WriterOptions = {

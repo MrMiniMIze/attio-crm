@@ -1,4 +1,4 @@
-import type { SlackApi } from '../../src/slack/api';
+import type { SlackApi } from '../../src/slack/api.ts';
 
 export function fakeSlack() {
   const calls: { method: string; args: unknown[] }[] = [];

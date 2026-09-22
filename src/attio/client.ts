@@ -1,4 +1,4 @@
-import type { AttioObject } from '../contract/write-report';
+import type { AttioObject } from '../contract/write-report.ts';
 
 export interface AttioRecord {
   record_id: string;
@@ -48,9 +48,13 @@ export interface AttioClient {
 }
 
 export class AttioError extends Error {
-  constructor(public status: number, public body: string, message?: string) {
+  status: number;
+  body: string;
+  constructor(status: number, body: string, message?: string) {
     super(message ?? `Attio ${status}: ${body.slice(0, 200)}`);
     this.name = 'AttioError';
+    this.status = status;
+    this.body = body;
   }
 }
 

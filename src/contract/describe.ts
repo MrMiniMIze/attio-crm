@@ -1,4 +1,4 @@
-import type { Action, ActionDocument, CompanyRef, PersonRef } from './action-document';
+import type { Action, ActionDocument, CompanyRef, PersonRef } from './action-document.ts';
 
 const companyNameOnly = (c: CompanyRef | null): string => {
   if (!c) return '';

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { verifySlackSignature } from '../../src/slack/verify';
+import { verifySlackSignature } from '../../src/slack/verify.ts';
 
 async function sign(secret: string, ts: string, body: string): Promise<string> {
   const key = await crypto.subtle.importKey(

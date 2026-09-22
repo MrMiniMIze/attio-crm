@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createMemoryStore, type SubmissionRecord } from '../../src/store/store';
+import { createMemoryStore, type SubmissionRecord } from '../../src/store/store.ts';
 
 const rec: SubmissionRecord = {
   submission_id: 'sub-1', form_kind: 'lead', requester: 'U1', created_at: '2026-09-04T23:45:00.000Z',

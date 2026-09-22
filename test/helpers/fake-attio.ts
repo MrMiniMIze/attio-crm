@@ -1,5 +1,5 @@
-import type { AttioClient, AttioMember, AttioRecord, AttioSearchHit, AttioStatus } from '../../src/attio/client';
-import type { AttioObject } from '../../src/contract/write-report';
+import type { AttioClient, AttioMember, AttioRecord, AttioSearchHit, AttioStatus } from '../../src/attio/client.ts';
+import type { AttioObject } from '../../src/contract/write-report.ts';
 
 export function rec(object: AttioObject, record_id: string, values: Record<string, any[]> = {}, created_at = '2026-01-01T00:00:00.000Z'): AttioRecord {
   return { record_id, object, values, web_url: `https://app.attio.com/t/${object}/${record_id}`, created_at };
